@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Информация о пользователе</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h2>Информация о пользователе</h2>
+
+    <div class="form-group">
+        <label for="id">ID:</label>
+        <p id="id" th:text="${user.id}"></p>
+    </div>
+
+    <div class="form-group">
+        <label for="name">Имя:</label>
+        <p id="name" th:text="${user.name}"></p>
+    </div>
+
+    <div class="form-group">
+        <label for="surname">Фамилия:</label>
+        <p id="surname" th:text="${user.surname}"></p>
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <p id="email" th:text="${user.email}"></p>
+    </div>
+
+    <div class="form-group">
+        <label for="age">Возраст:</label>
+        <p id="age" th:text="${user.age}"></p>
+    </div>
+    <div class="form-group">
+        <label for="roles">Роли:</label>
+        <select id="roles" th:field="*{roles}" multiple class="form-control">
+            <option th:each="role : ${allRoles}"
+                    th:value="${role.id}"
+                    th:text="${role.name}"
+                    th:selected="${user.roles.contains(role)}">
+            </option>
+        </select>
+    </div>
+    <a th:href="@{/admin}" class="btn btn-primary">Назад к списку пользователей</a>
+    <!-- Кнопка Logout -->
+    <form th:action="@{/logout}" method="post">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+        <button type="submit" class="btn btn-secondary">Logout</button>
+    </form>
+</div>
+</body>
+</html>
