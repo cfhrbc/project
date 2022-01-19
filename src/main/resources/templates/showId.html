@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <title>Детали пользователя</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h2>Детали пользователя</h2>
+    <ul>
+        <li><strong>ID:</strong> <span th:text="${user.id}"></span></li>
+        <li><strong>Имя:</strong> <span th:text="${user.name}"></span></li>
+        <li><strong>Фамилия:</strong> <span th:text="${user.surname}"></span></li>
+        <li><strong>Email:</strong> <span th:text="${user.email}"></span></li>
+        <li><strong>Возраст:</strong> <span th:text="${user.age}"></span></li>
+    </ul>
+    <a href="#" th:href="@{/admin}">Назад</a>
+    <!-- Кнопка Logout -->
+    <form th:action="@{/logout}" method="post">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+        <button type="submit" class="btn btn-secondary">Logout</button>
+    </form>
+</div>
+</body>
+</html>
