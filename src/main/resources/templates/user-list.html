@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User List</title>
+</head>
+<body>
+<h1>User List</h1>
+<a href="/admin/users/add">Add User</a>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Email</th>
+        <th>Age</th>
+        <th>Roles</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.surname}"></td>
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.age}"></td>
+        <td>
+            <div class="roles">
+                <span th:each="role : ${user.roles}" class="role" th:text="${role.name}"></span>
+            </div>
+            <a th:href="@{/admin/users/{id}(id=${user.id})}">Edit</a>
+            <form th:action="@{/admin/delete/{id}(id=${user.id})}" method="post">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<form th:action="@{/logout}" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+    <button type="submit">Logout</button>
+</form>
+</body>
+</html>

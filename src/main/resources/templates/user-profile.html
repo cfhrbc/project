@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+</head>
+<body>
+<h1>User Profile</h1>
+<p>ID: <span th:text="${user.id}"></span></p>
+<p>Name: <span th:text="${user.name}"></span></p>
+<p>Surname: <span th:text="${user.surname}"></span></p>
+<p>Email: <span th:text="${user.email}"></span></p>
+<p>Age: <span th:text="${user.age}"></span></p>
+
+<form th:action="@{/logout}" method="post">
+    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+    <button type="submit">Logout</button>
+</form>
+</body>
+</html>
