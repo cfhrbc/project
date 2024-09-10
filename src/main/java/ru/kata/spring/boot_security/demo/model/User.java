@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.model;
 
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,9 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.*;
 
+
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +23,6 @@ public class User implements UserDetails {
 
     @Column(name = "name")
     private String name;
-
-    @Column(name = "password")
-    private String password;
 
     @Column(name = "surname")
     private String surname;
@@ -35,12 +33,15 @@ public class User implements UserDetails {
     @Column(name = "age")
     private int age;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @Column(name = "password")
+    private String password;
+
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @Fetch(FetchMode.JOIN)
-    @Cascade(org.hibernate.annotations.CascadeType.PERSIST)
     @JoinTable(name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
 
     private Set<Role> roles = new HashSet<>();
@@ -49,7 +50,8 @@ public class User implements UserDetails {
     }
 
     public void addRole(Role role) {
-        this.roles.add(role);
+
+        roles.add(role);
     }
 
 

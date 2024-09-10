@@ -2,24 +2,20 @@ package ru.kata.spring.boot_security.demo.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.kata.spring.boot_security.demo.model.Role;
-import ru.kata.spring.boot_security.demo.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Repository
-public class RoleRepository {
-    private final EntityManager entityManager;
-
-
-    public RoleRepository(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
+public class RoleDao {
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public Role findByName(String name) {
         try {
-            return entityManager.createQuery(
-                            "SELECT r FROM Role r WHERE r.name = :name", Role.class)
+            return entityManager.createQuery("SELECT r FROM Role r WHERE r.name = :name", Role.class)
                     .setParameter("name", name)
                     .getSingleResult();
         } catch (NoResultException e) {
@@ -27,21 +23,21 @@ public class RoleRepository {
         }
     }
 
+
     public void save(Role role) {
         if (role.getId() == null) {
-            // Если у роли нет ID, то это новая роль, и мы её сохраняем
             entityManager.persist(role);
         } else {
-            // Если у роли уже есть ID, то обновляем её данные
             entityManager.merge(role);
         }
     }
+
+    public Role findRoleById(Integer id) {
+        return entityManager.find(Role.class, id);
+    }
+
+
+    public List<Role> findAll() {
+        return entityManager.createQuery("SELECT r FROM Role r", Role.class).getResultList();
+    }
 }
-
-
-
-
-
-/*
-Optional<Role> findByName(String name);
-*/
