@@ -1,106 +1,57 @@
 package ru.kata.spring.boot_security.demo.configs;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.kata.spring.boot_security.demo.service.UserService;
 
+@Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserRepository userRepository;
-    private final LoginSuccessHandler loginSuccessHandler;
+    private final UserService userService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    public WebSecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.userService = userService;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
 
-    public WebSecurityConfig(UserRepository userRepository, LoginSuccessHandler loginSuccessHandler) {
-        this.userRepository = userRepository;
-        this.loginSuccessHandler = loginSuccessHandler;
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable() // Отключаем CSRF
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Отключаем хранение сессий.
+                .and()
+                .authorizeRequests()
+                .antMatchers("/auth/login").permitAll() // Доступ к /auth/login открыт для всех.
+                .antMatchers("/admin/**").hasRole("ADMIN") // Доступ к /admin только для ролей ADMIN.
+                .antMatchers("/user/**").hasRole("USER") // Доступ к /user только для ролей USER.
+                .anyRequest().authenticated();
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Добавляем наш фильтр перед стандартным фильтром.
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(username -> {
-            User user = userRepository.findByUsername(username);
-            if (user == null) {
-                throw new UsernameNotFoundException("User not found");
-            }
-            return user;
-        }).passwordEncoder(passwordEncoder()); // Используй бин
+        auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
     }
+
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .successHandler(loginSuccessHandler)
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll();
-    }
 }
-
-    /*
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
-    private final SuccessUserHandler successUserHandler;
-
-
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl, SuccessUserHandler successUserHandler) {
-        this.userDetailsServiceImpl = userDetailsServiceImpl;
-        this.successUserHandler = successUserHandler;
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/user/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                .antMatchers("/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                .and()
-                .formLogin().successHandler(successUserHandler)
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll()
-                .and()
-                .exceptionHandling();
-    }
-
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsServiceImpl);
-        authProvider.setPasswordEncoder(bCryptPasswordEncoder());
-
-        return authProvider;
-    }
-
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) {
-        auth.authenticationProvider(authenticationProvider());
-    }
-
-}
-
-     */

@@ -35,7 +35,7 @@ public class User implements UserDetails {
     @Column(name = "age")
     private int age;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     @Fetch(FetchMode.JOIN)
     @Cascade(org.hibernate.annotations.CascadeType.PERSIST)
     @JoinTable(name = "users_roles",
