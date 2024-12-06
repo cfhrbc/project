@@ -65,6 +65,17 @@ public class AuthController {
         return user;
 
     }
+    @PutMapping("/users")
+    public User updateUser(@RequestBody User user) {
+        userService.saveUser(user);
+        return user;
+    }
+    @DeleteMapping("/users/{id}")
+    public String deleteUser(@PathVariable int id) {
+        userService.delete(id);
+        return "User with ID" + id + "was deleted";
+    }
+
 }
 
 
