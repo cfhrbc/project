@@ -25,7 +25,6 @@ public class AuthController {
     private final UserService userService;
 
 
-
     public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
@@ -45,17 +44,18 @@ public class AuthController {
             return ResponseEntity.status(401).body("Invalid username or password");
         }
     }
+
     @GetMapping("/users")
     public List<User> showAllUsers() {
         List<User> allUsers = userService.showAllUsers();
-        return  allUsers;
+        return allUsers;
     }
 
     @GetMapping("/users/{id}")
-    public  User getUserId(@PathVariable int id) {
+    public User getUserId(@PathVariable int id) {
         User user = userService.findUserById(id);
 
-        return  user;
+        return user;
     }
 
     @PostMapping("/users")
@@ -65,11 +65,13 @@ public class AuthController {
         return user;
 
     }
+
     @PutMapping("/users")
     public User updateUser(@RequestBody User user) {
         userService.saveUser(user);
         return user;
     }
+
     @DeleteMapping("/users/{id}")
     public String deleteUser(@PathVariable int id) {
         userService.delete(id);
