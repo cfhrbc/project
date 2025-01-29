@@ -11,6 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.zalando.logbook.Logbook;
+import org.zalando.logbook.servlet.LogbookFilter;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 @Configuration
@@ -19,10 +21,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserService userService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final Logbook logbook;
 
-    public WebSecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public WebSecurityConfig(UserService userService, JwtAuthenticationFilter jwtAuthenticationFilter, Logbook logbook) {
         this.userService = userService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.logbook = logbook;
     }
 
     @Override
@@ -37,8 +41,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/**").hasRole("USER") // Доступ к /user только для ролей USER.
                 .anyRequest().authenticated();
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // Добавляем наш фильтр перед стандартным фильтром.
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);// Добавляем наш фильтр перед стандартным фильтром.
+        http.addFilterBefore(new LogbookFilter(logbook), JwtAuthenticationFilter.class);
+
     }
+
+     
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -55,3 +63,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 }
+
+
