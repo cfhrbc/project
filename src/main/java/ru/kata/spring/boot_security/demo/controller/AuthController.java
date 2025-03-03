@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.configs.JwtTokenProvider;
 import ru.kata.spring.boot_security.demo.model.AuthRequest;
@@ -59,7 +60,8 @@ public class AuthController {
     }
 
     @PostMapping("/users")
-    public User addNewUser(@RequestBody User user) {
+    public User addNewUser(@Validated @RequestBody User user) {
+        // User user = UserMapper.toEntity(usersDto);
         userService.saveUser(user);
 
         return user;
