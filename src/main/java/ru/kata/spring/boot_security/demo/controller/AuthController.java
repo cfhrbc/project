@@ -6,15 +6,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.configs.JwtTokenProvider;
 import ru.kata.spring.boot_security.demo.model.AuthRequest;
 import ru.kata.spring.boot_security.demo.model.AuthResponse;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.model.UserDto;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
@@ -48,9 +47,9 @@ public class AuthController {
     }
 
     @GetMapping("/users")
-    public List<UserDto> showAllUsers() {
-        var allUsers = userService.showAllUsers();
-        return ;
+    public List<User> showAllUsers() {
+        List<User> allUsers = userService.showAllUsers();
+        return allUsers;
     }
 
     @GetMapping("/users/{id}")
@@ -61,10 +60,11 @@ public class AuthController {
     }
 
     @PostMapping("/users")
-    public UserDto addNewUser(@Valid @RequestBody User user) {
+    public User addNewUser(@Validated @RequestBody User user) {
+        // User user = UserMapper.toEntity(usersDto);
         userService.saveUser(user);
 
-        return ;
+        return user;
 
     }
 
