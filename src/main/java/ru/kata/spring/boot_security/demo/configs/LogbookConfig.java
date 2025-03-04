@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 @Configuration
 public class LogbookConfig {
+
     @Bean
     public Logbook logbook() {
         return Logbook.builder()
@@ -29,7 +30,6 @@ public class LogbookConfig {
                 )) // Маскируем password и token в теле запроса/ответа
                 .build();
     }
-
 
 
     @Bean

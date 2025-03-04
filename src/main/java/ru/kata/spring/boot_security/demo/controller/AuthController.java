@@ -61,7 +61,6 @@ public class AuthController {
 
     @PostMapping("/users")
     public User addNewUser(@Validated @RequestBody User user) {
-        // User user = UserMapper.toEntity(usersDto);
         userService.saveUser(user);
 
         return user;

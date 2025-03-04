@@ -8,11 +8,11 @@
 
     <!-- Логгер для Logbook -->
     <logger name="org.zalando.logbook" level="TRACE" additivity="false">
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
     <!-- Общие логи приложения -->
     <root level="INFO">
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>
