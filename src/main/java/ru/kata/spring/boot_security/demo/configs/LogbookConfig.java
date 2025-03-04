@@ -37,9 +37,6 @@ public class LogbookConfig {
         return new LogbookFilter(logbook);
     }
 
-    private boolean isExcludedEndpoint(String uri) {
-        return uri.contains("/auth/login");  // Отключаем логирование для /auth/login
-    }
 
     private BodyFilter maskSensitiveData(String field) {
         String regex = "(\"" + field + "\"\\s*:\\s*\").*?(\")"; // Находим JSON-поле и его значение
