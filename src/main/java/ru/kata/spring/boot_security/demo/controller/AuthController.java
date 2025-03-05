@@ -35,11 +35,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody AuthRequest authRequest) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            var authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
 
-            String token = jwtTokenProvider.generateToken(authentication);
+            var token = jwtTokenProvider.generateToken(authentication);
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401).body("Invalid username or password");
@@ -48,13 +48,13 @@ public class AuthController {
 
     @GetMapping("/users")
     public List<User> showAllUsers() {
-        List<User> allUsers = userService.showAllUsers();
+        var allUsers = userService.showAllUsers();
         return allUsers;
     }
 
     @GetMapping("/users/{id}")
     public User getUserId(@PathVariable int id) {
-        User user = userService.findUserById(id);
+        var user = userService.findUserById(id);
 
         return user;
     }

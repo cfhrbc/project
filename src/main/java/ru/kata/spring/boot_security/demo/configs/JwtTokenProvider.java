@@ -13,35 +13,35 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
     @Value("${jwt.secret}")
-    private String jwtSecret; // Секретный ключ для подписи токенов, который берется из файла конфигурации.
+    private String jwtSecret;
 
     @Value("${jwt.expiration}")
-    private long jwtExpiration; // Срок действия токена, также задается в конфигурации.
+    private long jwtExpiration;
 
-    // Генерация токена на основе данных аутентификации пользователя
+
     public String generateToken(Authentication authentication) {
-        String roles = authentication.getAuthorities().stream()
+        var roles = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(",")); // Получаем список ролей пользователя и преобразуем их в строку.
+                .collect(Collectors.joining(","));
 
         return Jwts.builder()
-                .setSubject(authentication.getName()) // Задаем имя пользователя в качестве основного содержания токена.
-                .claim("roles", roles) // Добавляем роли пользователя в токен.
-                .setIssuedAt(new Date()) // Устанавливаем текущую дату в качестве времени выдачи токена.
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration)) // Устанавливаем срок действия.
-                .signWith(SignatureAlgorithm.HS512, jwtSecret) // Подписываем токен с использованием секретного ключа.
+                .setSubject(authentication.getName())
+                .claim("roles", roles)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact(); // Компактируем данные в токен.
     }
 
-    // Получение имени пользователя из токена
+
     public String getUsernameFromToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
-    // Проверка токена на валидность
+
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token); // Если токен неверен, будет выброшено исключение.
+            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;

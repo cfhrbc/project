@@ -27,7 +27,7 @@ public class LogbookConfig {
                 .bodyFilter(BodyFilter.merge(
                         maskSensitiveData("password"),
                         maskSensitiveData("token")
-                )) // Маскируем password и token в теле запроса/ответа
+                ))
                 .build();
     }
 
@@ -39,7 +39,7 @@ public class LogbookConfig {
 
 
     private BodyFilter maskSensitiveData(String field) {
-        String regex = "(\"" + field + "\"\\s*:\\s*\").*?(\")"; // Находим JSON-поле и его значение
+        var regex = "(\"" + field + "\"\\s*:\\s*\").*?(\")";
         Pattern pattern = Pattern.compile(regex);
 
         return (contentType, body) -> pattern.matcher(body).replaceAll("$1***MASKED***$2");
