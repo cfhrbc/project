@@ -22,8 +22,8 @@ public class LogbookConfig {
     @Bean
     public Logbook logbook() {
         return Logbook.builder()
-                .queryFilter(QueryFilters.replaceQuery("auth/login", "***MASKED***")) // Скрываем URL
-                .headerFilter(HeaderFilters.replaceHeaders("Authorization", "***MASKED***")) // Маскируем токен в заголовке
+                .queryFilter(QueryFilters.replaceQuery("auth/login", "***MASKED***"))
+                .headerFilter(HeaderFilters.replaceHeaders("Authorization", "***MASKED***"))
                 .bodyFilter(BodyFilter.merge(
                         maskSensitiveData("password"),
                         maskSensitiveData("token")
