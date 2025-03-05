@@ -30,7 +30,7 @@ public class JwtTokenProvider {
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact(); // Компактируем данные в токен.
+                .compact();
     }
 
 

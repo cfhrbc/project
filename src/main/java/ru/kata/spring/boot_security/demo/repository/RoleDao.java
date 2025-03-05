@@ -33,12 +33,4 @@ public class RoleDao {
         }
     }
 
-    public Role findRoleById(Integer id) {
-        return entityManager.find(Role.class, id);
-    }
-
-
-    public List<Role> findAll() {
-        return entityManager.createQuery("SELECT r FROM Role r", Role.class).getResultList();
-    }
 }
