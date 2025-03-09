@@ -6,14 +6,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.configs.JwtTokenProvider;
 import ru.kata.spring.boot_security.demo.model.AuthRequest;
 import ru.kata.spring.boot_security.demo.model.AuthResponse;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.model.UserDto;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -35,11 +36,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody AuthRequest authRequest) {
         try {
-            var authentication = authenticationManager.authenticate(
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
 
-            var token = jwtTokenProvider.generateToken(authentication);
+            String token = jwtTokenProvider.generateToken(authentication);
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401).body("Invalid username or password");
@@ -47,20 +48,20 @@ public class AuthController {
     }
 
     @GetMapping("/users")
-    public List<User> showAllUsers() {
+    public List<UserDto> showAllUsers() {
         var allUsers = userService.showAllUsers();
         return allUsers;
     }
 
     @GetMapping("/users/{id}")
     public User getUserId(@PathVariable int id) {
-        var user = userService.findUserById(id);
+        User user = userService.findUserById(id);
 
         return user;
     }
 
     @PostMapping("/users")
-    public User addNewUser(@Validated @RequestBody User user) {
+    public UserDto addNewUser(@Valid @RequestBody User user) {
         userService.saveUser(user);
 
         return user;
