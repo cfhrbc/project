@@ -50,7 +50,7 @@ public class AuthController {
     @GetMapping("/users")
     public List<UserDto> showAllUsers() {
         var allUsers = userService.showAllUsers();
-        return allUsers;
+        return ;
     }
 
     @GetMapping("/users/{id}")
@@ -64,7 +64,7 @@ public class AuthController {
     public UserDto addNewUser(@Valid @RequestBody User user) {
         userService.saveUser(user);
 
-        return user;
+        return ;
 
     }
 
