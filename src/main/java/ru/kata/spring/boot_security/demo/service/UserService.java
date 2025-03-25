@@ -7,8 +7,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.mapper.UserMapper;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.model.UserDto;
 import ru.kata.spring.boot_security.demo.repository.RoleDao;
 import ru.kata.spring.boot_security.demo.repository.UserDao;
 
@@ -16,8 +18,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -30,11 +30,13 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     private final RoleDao roleDao;
+    private final UserMapper userMapper;
 
-    public UserService(@Lazy PasswordEncoder passwordEncoder, UserDao userDao, RoleDao roleDao) {
+    public UserService(@Lazy PasswordEncoder passwordEncoder, UserDao userDao, RoleDao roleDao, UserMapper userMapper) {
         this.passwordEncoder = passwordEncoder;
         this.userDao = userDao;
         this.roleDao = roleDao;
+        this.userMapper = userMapper;
     }
 
 
@@ -57,22 +59,21 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public void saveUser(User user) {
+    public void saveUser(UserDto userDto) {
 
+        var user = userMapper.toEntity(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-
         var existingRoles = new HashSet<Role>();
-        for (var role : user.getRoles()) {
-            var existingRole = roleDao.findByName(role.getName());
+        for (var roleDto : userDto.getRoles()) {
+            var existingRole = roleDao.findByName(roleDto.getName());
             if (existingRole != null) {
                 existingRoles.add(existingRole);
             } else {
-                existingRoles.add(role);
+                existingRoles.add(new Role(roleDto.getName()));
             }
         }
         user.setRoles(existingRoles);
-
 
         userDao.save(user);
     }

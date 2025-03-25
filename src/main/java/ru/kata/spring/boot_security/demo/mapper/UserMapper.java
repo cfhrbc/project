@@ -1,28 +1,16 @@
-/*package ru.kata.spring.boot_security.demo.mapper;
+package ru.kata.spring.boot_security.demo.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.model.UsersDto;
+import ru.kata.spring.boot_security.demo.model.UserDto;
 
-public class UserMapper {
-    public static User toEntity(UsersDto dto) {
-        User user = new User();
-        user.setName(dto.getName());
-        user.setSurname(dto.getSurname());
-        user.setEmail(dto.getEmail());
-        user.setAge(dto.getAge());
-        user.setPassword(dto.getPassword());
-        return user;
-    }
+@Mapper(componentModel = "spring")
+public interface UserMapper {
 
-    public static UsersDto toDto(User user) {
-        UsersDto dto = new UsersDto();
-        dto.setName(user.getName());
-        dto.setSurname(user.getSurname());
-        dto.setEmail(user.getEmail());
-        dto.setAge(user.getAge());
-        return dto;
-    }
+    UserDto toDto(User user);
+
+    @Mapping(target = "password", source = "password")
+    User toEntity(UserDto userDto);
 
 }
-
- */

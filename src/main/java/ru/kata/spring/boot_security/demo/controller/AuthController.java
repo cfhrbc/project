@@ -5,15 +5,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.configs.JwtTokenProvider;
+import ru.kata.spring.boot_security.demo.mapper.UserMapper;
 import ru.kata.spring.boot_security.demo.model.AuthRequest;
 import ru.kata.spring.boot_security.demo.model.AuthResponse;
-import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.model.UserDto;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -23,60 +25,64 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
+    private final UserMapper userMapper;
 
 
-    public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService) {
+    public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService, UserMapper userMapper) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody AuthRequest authRequest) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            var authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
 
-            String token = jwtTokenProvider.generateToken(authentication);
+            var token = jwtTokenProvider.generateToken(authentication);
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(401).body("Invalid username or password");
+            return ResponseEntity.status(401).body("Неверное имя пользователя или пароль");
         }
     }
 
     @GetMapping("/users")
-    public List<User> showAllUsers() {
-        List<User> allUsers = userService.showAllUsers();
-        return allUsers;
+    public List<UserDto> showAllUsers() {
+        return userService.showAllUsers()
+                .stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
+
     }
 
     @GetMapping("/users/{id}")
-    public User getUserId(@PathVariable int id) {
-        User user = userService.findUserById(id);
+    public UserDto getUserId(@PathVariable int id) {
+        var user = userService.findUserById(id);
 
-        return user;
+        return userMapper.toDto(user);
     }
 
     @PostMapping("/users")
-    public User addNewUser(@Validated @RequestBody User user) {
-        // User user = UserMapper.toEntity(usersDto);
-        userService.saveUser(user);
+    public UserDto addNewUser(@Valid @RequestBody UserDto userDto) {
+        userService.saveUser(userDto);
 
-        return user;
+        return userDto;
 
     }
 
     @PutMapping("/users")
-    public User updateUser(@RequestBody User user) {
-        userService.saveUser(user);
-        return user;
+    public UserDto updateUser(@Valid @RequestBody UserDto userDto) {
+        userService.saveUser(userDto);
+        return userDto;
     }
 
     @DeleteMapping("/users/{id}")
-    public String deleteUser(@PathVariable int id) {
+    public ResponseEntity<String> deleteUser(@PathVariable int id) {
         userService.delete(id);
-        return "User with ID" + id + "was deleted";
+        return ResponseEntity.ok("Пользователь с ID" + id + "был удалён");
     }
 
 }
