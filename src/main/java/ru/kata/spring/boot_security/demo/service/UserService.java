@@ -31,7 +31,7 @@ public class UserService implements UserDetailsService {
 
     private final RoleDao roleDao;
 
-    public UserService(@Lazy PasswordEncoder passwordEncoder, UserDao userDao, RoleService roleService, RoleDao roleDao) {
+    public UserService(@Lazy PasswordEncoder passwordEncoder, UserDao userDao, RoleDao roleDao) {
         this.passwordEncoder = passwordEncoder;
         this.userDao = userDao;
         this.roleDao = roleDao;
@@ -39,7 +39,7 @@ public class UserService implements UserDetailsService {
 
 
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        User user = userDao.findByName(name);
+        var user = userDao.findByName(name);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
@@ -58,22 +58,22 @@ public class UserService implements UserDetailsService {
 
 
     public void saveUser(User user) {
-        // Зашифровать пароль
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // Проверить существование ролей
-        Set<Role> existingRoles = new HashSet<>();
-        for (Role role : user.getRoles()) {
-            Role existingRole = roleDao.findByName(role.getName());
+
+        var existingRoles = new HashSet<Role>();
+        for (var role : user.getRoles()) {
+            var existingRole = roleDao.findByName(role.getName());
             if (existingRole != null) {
                 existingRoles.add(existingRole);
             } else {
-                existingRoles.add(role); // Создать новую роль
+                existingRoles.add(role);
             }
         }
         user.setRoles(existingRoles);
 
-        // Сохранить пользователя
+
         userDao.save(user);
     }
 

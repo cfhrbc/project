@@ -32,21 +32,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable() // Отключаем CSRF
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Отключаем хранение сессий.
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/auth/login").permitAll() // Доступ к /auth/login открыт для всех.
-                .antMatchers("/admin/**").hasRole("ADMIN") // Доступ к /admin только для ролей ADMIN.
-                .antMatchers("/user/**").hasRole("USER") // Доступ к /user только для ролей USER.
+                .antMatchers("/auth/login").permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/user/**").hasRole("USER")
                 .anyRequest().authenticated();
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);// Добавляем наш фильтр перед стандартным фильтром.
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new LogbookFilter(logbook), JwtAuthenticationFilter.class);
 
     }
 
-     
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

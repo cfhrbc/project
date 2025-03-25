@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.configs.JwtTokenProvider;
 import ru.kata.spring.boot_security.demo.model.AuthRequest;
@@ -34,11 +35,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody AuthRequest authRequest) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            var authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
 
-            String token = jwtTokenProvider.generateToken(authentication);
+            var token = jwtTokenProvider.generateToken(authentication);
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401).body("Invalid username or password");
@@ -47,19 +48,19 @@ public class AuthController {
 
     @GetMapping("/users")
     public List<User> showAllUsers() {
-        List<User> allUsers = userService.showAllUsers();
+        var allUsers = userService.showAllUsers();
         return allUsers;
     }
 
     @GetMapping("/users/{id}")
     public User getUserId(@PathVariable int id) {
-        User user = userService.findUserById(id);
+        var user = userService.findUserById(id);
 
         return user;
     }
 
     @PostMapping("/users")
-    public User addNewUser(@RequestBody User user) {
+    public User addNewUser(@Validated @RequestBody User user) {
         userService.saveUser(user);
 
         return user;

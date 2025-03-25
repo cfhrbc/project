@@ -39,10 +39,10 @@ public class UserDao {
 
 
     public void deleteById(Integer id) {
-        // Поиск пользователя по ID
-        User user = entityManager.find(User.class, id);
+
+        var user = entityManager.find(User.class, id);
         if (user != null) {
-            // Удаление пользователя
+
             entityManager.remove(user);
         } else {
             throw new RuntimeException("User not found with id: " + id);

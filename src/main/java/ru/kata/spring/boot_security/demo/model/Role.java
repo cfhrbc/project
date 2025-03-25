@@ -72,7 +72,7 @@ public class Role implements GrantedAuthority {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Role role = (Role) o;
+        var role = (Role) o;
         return id == role.id && Objects.equals(name, role.name);
     }
 

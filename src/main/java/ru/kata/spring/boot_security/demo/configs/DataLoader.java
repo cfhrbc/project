@@ -28,22 +28,22 @@ public class DataLoader implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
 
-        Role adminRole = roleDao.findByName("ROLE_ADMIN");
+        var adminRole = roleDao.findByName("ROLE_ADMIN");
         if (adminRole == null) {
             adminRole = new Role("ROLE_ADMIN");
             roleDao.save(adminRole);
         }
 
-        // Проверка и создание роли 'ROLE_USER'
-        Role userRole = roleDao.findByName("ROLE_USER");
+
+        var userRole = roleDao.findByName("ROLE_USER");
         if (userRole == null) {
             userRole = new Role("ROLE_USER");
             roleDao.save(userRole);
         }
 
-        // Создаем пользователя с ролью админ
+
         if (userDao.findByName("admin") == null) {
-            User admin = new User();
+            var admin = new User();
             admin.setName("admin");
             admin.setSurname("Adminov");
             admin.setAge(44);
@@ -51,7 +51,7 @@ public class DataLoader implements CommandLineRunner {
             admin.setPassword(passwordEncoder.encode("admin"));
 
 
-            admin.addRole(adminRole); // Присваиваем роль пользователю
+            admin.addRole(adminRole);
 
             userDao.save(admin);
 
