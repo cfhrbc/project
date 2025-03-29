@@ -26,12 +26,10 @@ public class LogbookConfig {
                 .build();
     }
 
-
     @Bean
     public Filter logbookFilter(Logbook logbook) {
         return new LogbookFilter(logbook);
     }
-
 
     private BodyFilter maskSensitiveData(String field) {
         var regex = "(\"" + field + "\"\\s*:\\s*\").*?(\")";

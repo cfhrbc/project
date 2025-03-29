@@ -13,7 +13,6 @@ public class UserDao {
     @PersistenceContext
     private EntityManager entityManager;
 
-
     public User findByName(String name) {
         try {
             return entityManager.createQuery("SELECT u FROM User u WHERE u.name = :name", User.class)
@@ -23,32 +22,25 @@ public class UserDao {
             return null;
         }
     }
-
     public List<User> findAllUsers() {
         return entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
     }
-
-
-    public void save(User user) {
+    public User save(User user) {
         if (user.getId() == null) {
             entityManager.persist(user);
+            return user;
         } else {
-            entityManager.merge(user);
+            return entityManager.merge(user);
         }
     }
-
-
     public void deleteById(Integer id) {
-
         var user = entityManager.find(User.class, id);
         if (user != null) {
-
             entityManager.remove(user);
         } else {
             throw new RuntimeException("User not found with id: " + id);
         }
     }
-
     public User findById(Integer id) {
         return entityManager.find(User.class, id);
     }

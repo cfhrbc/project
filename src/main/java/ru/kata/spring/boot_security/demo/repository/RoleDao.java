@@ -21,8 +21,6 @@ public class RoleDao {
             return null;
         }
     }
-
-
     public void save(Role role) {
         if (role.getId() == null) {
             entityManager.persist(role);
@@ -30,5 +28,4 @@ public class RoleDao {
             entityManager.merge(role);
         }
     }
-
 }

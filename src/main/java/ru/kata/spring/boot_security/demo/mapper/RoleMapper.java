@@ -8,6 +8,4 @@ import ru.kata.spring.boot_security.demo.model.RoleDto;
 public interface RoleMapper {
     RoleDto toDto(Role role);
     Role toEntity(RoleDto roleDto);
-
-
 }

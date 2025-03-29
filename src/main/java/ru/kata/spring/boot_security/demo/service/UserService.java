@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -25,10 +26,8 @@ import java.util.List;
 public class UserService implements UserDetailsService {
     @PersistenceContext
     private EntityManager entityManager;
-
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
-
     private final RoleDao roleDao;
     private final UserMapper userMapper;
 
@@ -38,8 +37,6 @@ public class UserService implements UserDetailsService {
         this.roleDao = roleDao;
         this.userMapper = userMapper;
     }
-
-
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         var user = userDao.findByName(name);
         if (user == null) {
@@ -47,19 +44,16 @@ public class UserService implements UserDetailsService {
         }
         return user;
     }
-
-
-    public List<User> showAllUsers() {
-        return userDao.findAllUsers();
+    public List<UserDto> showAllUsers() {
+        return userDao.findAllUsers()
+                .stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
     }
-
-
     public void delete(int id) {
         userDao.deleteById(id);
     }
-
-
-    public void saveUser(UserDto userDto) {
+    public UserDto saveUser(UserDto userDto) {
 
         var user = userMapper.toEntity(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -74,14 +68,12 @@ public class UserService implements UserDetailsService {
             }
         }
         user.setRoles(existingRoles);
-
-        userDao.save(user);
+        var savedUser = userDao.save(user);
+        return userMapper.toDto(savedUser);
     }
-
-    public User findUserById(Integer id) {
-        return userDao.findById(id);
+    public UserDto findUserById(Integer id) {
+        User user = userDao.findById(id);
+        return userMapper.toDto(user);
     }
-
-
 }
 

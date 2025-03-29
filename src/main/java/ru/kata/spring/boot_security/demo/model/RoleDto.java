@@ -8,9 +8,6 @@ import lombok.NoArgsConstructor;
 public class RoleDto {
 
     private int id;
-
-
+    
     private String name;
-
-
 }

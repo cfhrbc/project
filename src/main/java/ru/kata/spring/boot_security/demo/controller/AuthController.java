@@ -25,16 +25,11 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
-    private final UserMapper userMapper;
-
-
-    public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService, UserMapper userMapper) {
+    public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
-        this.userMapper = userMapper;
     }
-
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody AuthRequest authRequest) {
         try {
@@ -51,38 +46,28 @@ public class AuthController {
 
     @GetMapping("/users")
     public List<UserDto> showAllUsers() {
-        return userService.showAllUsers()
-                .stream()
-                .map(userMapper::toDto)
-                .collect(Collectors.toList());
-
+        return userService.showAllUsers();
     }
 
     @GetMapping("/users/{id}")
     public UserDto getUserId(@PathVariable int id) {
-        var user = userService.findUserById(id);
-
-        return userMapper.toDto(user);
+        return userService.findUserById(id);
     }
 
     @PostMapping("/users")
     public UserDto addNewUser(@Valid @RequestBody UserDto userDto) {
-        userService.saveUser(userDto);
-
-        return userDto;
-
+        return userService.saveUser(userDto);
     }
 
     @PutMapping("/users")
     public UserDto updateUser(@Valid @RequestBody UserDto userDto) {
-        userService.saveUser(userDto);
-        return userDto;
+        return userService.saveUser(userDto);
     }
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable int id) {
         userService.delete(id);
-        return ResponseEntity.ok("Пользователь с ID" + id + "был удалён");
+        return ResponseEntity.noContent().build();
     }
 
 }

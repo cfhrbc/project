@@ -52,7 +52,6 @@ public class User implements UserDetails {
         this.roles.add(role);
     }
 
-
     public User(String name, String password, String surname, String email, int age) {
         this.name = name;
         this.password = password;
@@ -60,7 +59,6 @@ public class User implements UserDetails {
         this.email = email;
         this.age = age;
     }
-
     public Integer getId() {
         return id;
     }

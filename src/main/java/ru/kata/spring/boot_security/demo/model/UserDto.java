@@ -13,7 +13,6 @@ import java.util.Set;
 @NoArgsConstructor
 public class UserDto {
 
-
     private Integer id;
 
     @NotBlank(message = "Строка не может быть пустой")
@@ -36,6 +35,4 @@ public class UserDto {
     private int age;
 
     private Set<RoleDto> roles;
-
-
 }
