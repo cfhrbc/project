@@ -27,21 +27,16 @@ public class DataLoader implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-
         var adminRole = roleDao.findByName("ROLE_ADMIN");
         if (adminRole == null) {
             adminRole = new Role("ROLE_ADMIN");
             roleDao.save(adminRole);
         }
-
-
         var userRole = roleDao.findByName("ROLE_USER");
         if (userRole == null) {
             userRole = new Role("ROLE_USER");
             roleDao.save(userRole);
         }
-
-
         if (userDao.findByName("admin") == null) {
             var admin = new User();
             admin.setName("admin");
@@ -49,13 +44,8 @@ public class DataLoader implements CommandLineRunner {
             admin.setAge(44);
             admin.setEmail("sdcsrcscs@bk.ru");
             admin.setPassword(passwordEncoder.encode("admin"));
-
-
             admin.addRole(adminRole);
-
             userDao.save(admin);
-
-
         }
 
     }

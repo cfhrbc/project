@@ -18,7 +18,6 @@ public class JwtTokenProvider {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-
     public String generateToken(Authentication authentication) {
         var roles = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -33,11 +32,9 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-
     public String getUsernameFromToken(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
-
 
     public boolean validateToken(String token) {
         try {
