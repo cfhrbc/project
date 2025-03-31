@@ -19,19 +19,14 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-
     @Column(name = "name")
     private String name;
-
     @Column(name = "password")
     private String password;
-
     @Column(name = "surname")
     private String surname;
-
     @Column(name = "email")
     private String email;
-
     @Column(name = "age")
     private int age;
 
@@ -51,7 +46,6 @@ public class User implements UserDetails {
     public void addRole(Role role) {
         this.roles.add(role);
     }
-
 
     public User(String name, String password, String surname, String email, int age) {
         this.name = name;
@@ -164,7 +158,6 @@ public class User implements UserDetails {
     public int hashCode() {
         return Objects.hash(id, name, password, surname, email, age, roles);
     }
-
 }
 
 

@@ -4,16 +4,15 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.configs.JwtTokenProvider;
 import ru.kata.spring.boot_security.demo.model.AuthRequest;
 import ru.kata.spring.boot_security.demo.model.AuthResponse;
-import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.model.UserDto;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -24,7 +23,6 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
-
 
     public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService) {
         this.authenticationManager = authenticationManager;
@@ -42,43 +40,35 @@ public class AuthController {
             var token = jwtTokenProvider.generateToken(authentication);
             return ResponseEntity.ok(new AuthResponse(token));
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(401).body("Invalid username or password");
+            return ResponseEntity.status(401).body("Неверное имя пользователя или пароль");
         }
     }
 
     @GetMapping("/users")
-    public List<User> showAllUsers() {
-        var allUsers = userService.showAllUsers();
-        return allUsers;
+    public List<UserDto> showAllUsers() {
+        return userService.showAllUsers();
     }
 
     @GetMapping("/users/{id}")
-    public User getUserId(@PathVariable int id) {
-        var user = userService.findUserById(id);
-
-        return user;
+    public UserDto getUserId(@PathVariable int id) {
+        return userService.findUserById(id);
     }
 
     @PostMapping("/users")
-    public User addNewUser(@Validated @RequestBody User user) {
-        userService.saveUser(user);
-
-        return user;
-
+    public UserDto addNewUser(@Valid @RequestBody UserDto userDto) {
+        return userService.saveUser(userDto);
     }
 
     @PutMapping("/users")
-    public User updateUser(@RequestBody User user) {
-        userService.saveUser(user);
-        return user;
+    public UserDto updateUser(@Valid @RequestBody UserDto userDto) {
+        return userService.saveUser(userDto);
     }
 
     @DeleteMapping("/users/{id}")
-    public String deleteUser(@PathVariable int id) {
+    public ResponseEntity<String> deleteUser(@PathVariable int id) {
         userService.delete(id);
-        return "User with ID" + id + "was deleted";
+        return ResponseEntity.noContent().build();
     }
-
 }
 
 
