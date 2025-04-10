@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.mapper.UserMapper;
 import ru.kata.spring.boot_security.demo.model.Role;
+import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.model.UserDto;
 import ru.kata.spring.boot_security.demo.repository.RoleDao;
 import ru.kata.spring.boot_security.demo.repository.UserDao;
@@ -17,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -80,6 +82,11 @@ public class UserService implements UserDetailsService {
     public UserDto findUserById(Integer id) {
         var user = userDao.findById(id);
         return userMapper.toDto(user);
+    }
+
+    public List<UserDto> getUsersWithFilters(Map<String, String> filters, String sortBy, String sortOrder) {
+        List<User> users = userDao.findAllWithFilters(filters, sortBy, sortOrder);
+        return users.stream().map(userMapper::toDto).collect(Collectors.toList());
     }
 }
 

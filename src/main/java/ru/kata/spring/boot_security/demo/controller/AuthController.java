@@ -18,6 +18,7 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -90,6 +91,18 @@ public class AuthController {
     public ResponseEntity<String> deleteUser(@PathVariable @Parameter(description = "ID пользователя", example = "1") int id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Фильтрация и сортировка пользователей", description = "Фильтрует/сортирует пользователей по их полям")
+    @ApiResponse(responseCode = "200", description = "Фильтрация/сортировка успошно выполнено")
+    @GetMapping("/users/all")
+    public ResponseEntity<List<UserDto>> getUsers(
+            @RequestParam(required = false) Map<String, String> filters,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String sortOrder
+    ) {
+        List<UserDto> users = userService.getUsersWithFilters(filters, sortBy, sortOrder);
+        return ResponseEntity.ok(users);
     }
 }
 
