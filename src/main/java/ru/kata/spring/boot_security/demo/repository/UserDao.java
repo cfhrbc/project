@@ -43,7 +43,7 @@ public class UserDao {
     }
 
     public List<User> findAllWithFilters(Map<String, String> filters, String sortBy, String sortOrder) {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        var cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> query = cb.createQuery(User.class);
         Root<User> root = query.from(User.class);
 
@@ -51,7 +51,7 @@ public class UserDao {
         if (filters.containsKey("role")) {
             rolesJoin = root.join("roles");
         }
-        Metamodel metamodel = entityManager.getMetamodel();
+        var metamodel = entityManager.getMetamodel();
         EntityType<User> entityType = metamodel.entity(User.class);
 
         List<Predicate> predicates = new ArrayList<>();
