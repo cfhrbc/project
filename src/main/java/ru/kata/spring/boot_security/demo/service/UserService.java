@@ -1,24 +1,25 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.Specifications.UserSpecifications;
 import ru.kata.spring.boot_security.demo.mapper.UserMapper;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.model.UserDto;
-import ru.kata.spring.boot_security.demo.repository.RoleDao;
-import ru.kata.spring.boot_security.demo.repository.UserDao;
+import ru.kata.spring.boot_security.demo.repository.RoleRepository;
+import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -26,66 +27,65 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserService implements UserDetailsService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    private final UserDao userDao;
-    private final PasswordEncoder passwordEncoder;
-    private final RoleDao roleDao;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(@Lazy PasswordEncoder passwordEncoder, UserDao userDao, RoleDao roleDao, UserMapper userMapper) {
+    public UserService(@Lazy PasswordEncoder passwordEncoder, UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper) {
         this.passwordEncoder = passwordEncoder;
-        this.userDao = userDao;
-        this.roleDao = roleDao;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.userMapper = userMapper;
     }
 
-    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        var user = userDao.findByName(name);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-        return user;
+    @Override
+    public UserDetails loadUserByUsername(String name) {
+        return userRepository.findByName(name)
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
     }
 
     public List<UserDto> showAllUsers() {
-        return userDao.findAllUsers()
+        return userRepository.findAll()
                 .stream()
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     public void delete(int id) {
-        userDao.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     public UserDto saveUser(UserDto userDto) {
-
         var user = userMapper.toEntity(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        var existingRoles = new HashSet<Role>();
-        for (var roleDto : userDto.getRoles()) {
-            var existingRole = roleDao.findByName(roleDto.getName());
-            if (existingRole != null) {
-                existingRoles.add(existingRole);
-            } else {
-                existingRoles.add(new Role(roleDto.getName()));
-            }
-        }
-        user.setRoles(existingRoles);
-        var savedUser = userDao.save(user);
-        return userMapper.toDto(savedUser);
+        Set<Role> roles = userDto.getRoles().stream()
+                .map(roleDto -> roleRepository.findByName(roleDto.getName())
+                        .orElse(new Role(roleDto.getName())))
+                .collect(Collectors.toSet());
+
+        user.setRoles(roles);
+        return userMapper.toDto(userRepository.save(user));
     }
 
     public UserDto findUserById(Integer id) {
-        var user = userDao.findById(id);
-        return userMapper.toDto(user);
+        return userRepository.findById(id)
+                .map(userMapper::toDto)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
     }
 
     public List<UserDto> getUsersWithFilters(Map<String, String> filters, String sortBy, String sortOrder) {
-        List<User> users = userDao.findAllWithFilters(filters, sortBy, sortOrder);
+        Specification<User> spec = UserSpecifications.withFilters(filters);
+
+        Sort sort = Sort.unsorted();
+        if (sortBy != null && !sortBy.isEmpty()) {
+            sort = "desc".equalsIgnoreCase(sortOrder)
+                    ? Sort.by(sortBy).descending()
+                    : Sort.by(sortBy).ascending();
+        }
+
+        List<User> users = userRepository.findAll(spec, sort);
         return users.stream().map(userMapper::toDto).collect(Collectors.toList());
     }
 }

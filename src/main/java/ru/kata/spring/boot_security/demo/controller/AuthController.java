@@ -96,13 +96,12 @@ public class AuthController {
     @Operation(summary = "Фильтрация и сортировка пользователей", description = "Фильтрует/сортирует пользователей по их полям")
     @ApiResponse(responseCode = "200", description = "Фильтрация/сортировка успошно выполнено")
     @GetMapping("/users/all")
-    public ResponseEntity<List<UserDto>> getUsers(
+    public List<UserDto> getUsers(
             @RequestParam(required = false) Map<String, String> filters,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false, defaultValue = "asc") String sortOrder
     ) {
-        List<UserDto> users = userService.getUsersWithFilters(filters, sortBy, sortOrder);
-        return ResponseEntity.ok(users);
+        return userService.getUsersWithFilters(filters, sortBy, sortOrder);
     }
 }
 
