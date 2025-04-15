@@ -1,15 +1,14 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 import ru.kata.spring.boot_security.demo.Specifications.UserSpecifications;
+import ru.kata.spring.boot_security.demo.exception.UserNotFoundException;
 import ru.kata.spring.boot_security.demo.mapper.UserMapper;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.UserDto;
@@ -19,8 +18,6 @@ import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 
 @Service
@@ -54,7 +51,7 @@ public class UserService implements UserDetailsService {
 
     public void delete(int id) {
         userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
 
         userRepository.deleteById(id);
     }
@@ -75,7 +72,7 @@ public class UserService implements UserDetailsService {
     public UserDto findUserById(Integer id) {
         return userRepository.findById(id)
                 .map(userMapper::toDto)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "Пользователь не найден"));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
     }
 
     public List<UserDto> getUsersWithFilters(Map<String, String> filters, String sortBy, String sortOrder) {

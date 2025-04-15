@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.Specifications;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import ru.kata.spring.boot_security.demo.model.User;
 
@@ -12,10 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
+@Slf4j
 public class UserSpecifications {
-
-    private static final Logger log = LoggerFactory.getLogger(UserSpecifications.class);
 
     public static Specification<User> withFilters(Map<String, String> filters) {
         return (root, query, CriteriaBuilder) -> {
