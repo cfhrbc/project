@@ -9,9 +9,14 @@ import java.util.Map;
 public interface UserService {
 
     UserDetails loadUserByUsername(String name);
+
     List<UserDto> showAllUsers();
+
     UserDto findUserById(int id);
+
     UserDto saveUser(UserDto userDto);
+
     void delete(int id);
+
     List<UserDto> getUsersWithFilters(Map<String, String> filters, String sortBy, String sortOrder);
 }
