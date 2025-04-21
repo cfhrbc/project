@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +15,8 @@ import java.util.Set;
 @Data
 @Schema(description = "DTO пользователя")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserDto {
 
     @Schema(description = "Идентификатор пользователя", example = "1")

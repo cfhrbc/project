@@ -15,7 +15,7 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
-    private Integer id;
+    private int id;
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
@@ -41,11 +41,11 @@ public class Role implements GrantedAuthority {
     public Role() {
     }
 
-    public Role(Integer id) {
+    public Role(int id) {
         this.id = id;
     }
 
-    public Role(Integer id, String name) {
+    public Role(int id, String name) {
         this.id = id;
         this.name = name;
     }
