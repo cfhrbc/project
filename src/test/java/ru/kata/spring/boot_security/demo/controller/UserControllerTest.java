@@ -45,7 +45,7 @@ public class UserControllerTest {
         UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
 
         var userDto = UserDto.builder()
-                .id(1)
+                .id(1L)
                 .name("User")
                 .surname("Surname")
                 .password("password")
@@ -72,7 +72,7 @@ public class UserControllerTest {
         UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
 
         var user = UserDto.builder()
-                .id(1)
+                .id(1L)
                 .name("Test")
                 .surname("admin")
                 .password("pass123")
@@ -81,7 +81,7 @@ public class UserControllerTest {
                 .roles(Set.of())
                 .build();
 
-        when(userService.findUserById(1)).thenReturn(user);
+        when(userService.findUserById(1L)).thenReturn(user);
 
         mockMvc.perform(get("/users/1")
                         .header("Authorization", "Bearer token"))
@@ -104,7 +104,7 @@ public class UserControllerTest {
                 .build();
 
         var saved = UserDto.builder()
-                .id(1)
+                .id(1L)
                 .name("New")
                 .surname("User")
                 .password("pass123")
@@ -129,7 +129,7 @@ public class UserControllerTest {
         UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
 
         var updated = UserDto.builder()
-                .id(1)
+                .id(1L)
                 .name("Updated")
                 .surname("User")
                 .password("password")
@@ -152,7 +152,7 @@ public class UserControllerTest {
     void deleteUser() throws Exception {
         UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
 
-        Mockito.doNothing().when(userService).delete(1);
+        Mockito.doNothing().when(userService).delete(1L);
 
         mockMvc.perform(delete("/users/1")
                         .header("Authorization", "Bearer token"))
@@ -164,7 +164,7 @@ public class UserControllerTest {
         UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
 
         var user1 = UserDto.builder()
-                .id(1)
+                .id(1L)
                 .name("Alice")
                 .surname("Smith")
                 .email("alice@mail.com")
@@ -173,7 +173,7 @@ public class UserControllerTest {
                 .build();
 
         var user2 = UserDto.builder()
-                .id(2)
+                .id(2L)
                 .name("Bob")
                 .surname("Johnson")
                 .email("bob@mail.com")
