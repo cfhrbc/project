@@ -35,7 +35,7 @@ public class UserController {
     @ApiResponse(responseCode = "200", description = "Пользователь успешно получен")
     @ApiResponse(responseCode = "404", description = "Пользователь не найден")
     @GetMapping("/{id}")
-    public UserDto getUserId(@PathVariable @Parameter(description = "ID пользователя", example = "1") int id) {
+    public UserDto getUserId(@PathVariable @Parameter(description = "ID пользователя", example = "1") Long id) {
         return userService.findUserById(id);
     }
 
@@ -59,7 +59,7 @@ public class UserController {
     @ApiResponse(responseCode = "204", description = "Пользователь успешно удалён")
     @ApiResponse(responseCode = "404", description = "Пользователь не найден")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable @Parameter(description = "ID пользователя", example = "1") int id) {
+    public ResponseEntity<String> deleteUser(@PathVariable @Parameter(description = "ID пользователя", example = "1") Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -20,7 +20,7 @@ import java.util.Set;
 public class UserDto {
 
     @Schema(description = "Идентификатор пользователя", example = "1")
-    private Integer id;
+    private Long id;
 
     @Schema(description = "Имя пользователя", example = "Ivan")
     @NotBlank(message = "Строка не может быть пустой")

@@ -12,11 +12,11 @@ public interface UserService {
 
     List<UserDto> showAllUsers();
 
-    UserDto findUserById(int id);
+    UserDto findUserById(Long id);
 
     UserDto saveUser(UserDto userDto);
 
-    void delete(int id);
+    void delete(Long id);
 
     List<UserDto> getUsersWithFilters(Map<String, String> filters, String sortBy, String sortOrder);
 }
