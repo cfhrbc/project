@@ -4,5 +4,13 @@ databaseChangeLog:
       author: your-name
       changes:
         - sqlFile:
-            path: sql/init-schema.sql
+            path: sql/V1_init-schema.sql
+            relativeToChangelogFile: true
+
+  - changeSet:
+      id: 2
+      author: your-name
+      changes:
+        - sqlFile:
+            path: sql/V2_init-data.sql
             relativeToChangelogFile: true
