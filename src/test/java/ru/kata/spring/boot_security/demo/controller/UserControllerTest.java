@@ -11,7 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.kata.spring.boot_security.demo.configs.JwtTokenProvider;
-import ru.kata.spring.boot_security.demo.model.UserDto;
+import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.HashMap;
