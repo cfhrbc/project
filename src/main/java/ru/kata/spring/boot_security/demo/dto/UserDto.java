@@ -1,10 +1,11 @@
-package ru.kata.spring.boot_security.demo.model;
+package ru.kata.spring.boot_security.demo.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.kata.spring.boot_security.demo.dto.RoleDto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
