@@ -20,45 +20,5 @@ databaseChangeLog:
       author: your-name
       changes:
         - sqlFile:
-            path: sql/V3_init-car.sql
-            relativeToChangelogFile: true
-
-  - changeSet:
-      id: 4
-      author: your-name
-      changes:
-        - sqlFile:
-            path: sql/V4_init-family.sql
-            relativeToChangelogFile: true
-
-  - changeSet:
-      id: 5
-      author: your-name
-      changes:
-        - sqlFile:
-            path: sql/V5_init-house.sql
-            relativeToChangelogFile: true
-
-  - changeSet:
-      id: 6
-      author: your-name
-      changes:
-        - sqlFile:
-            path: sql/V6_social-media.sql
-            relativeToChangelogFile: true
-
-  - changeSet:
-      id: 7
-      author: your-name
-      changes:
-        - sqlFile:
-            path: sql/V7_education-init.sql
-            relativeToChangelogFile: true
-
-  - changeSet:
-      id: 8
-      author: your-name
-      changes:
-        - sqlFile:
-            path: sql/V8_work-init.sql
+            path: sql/V3_init-user-details.sql
             relativeToChangelogFile: true

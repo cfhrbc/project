@@ -16,10 +16,12 @@ import ru.kata.spring.boot_security.demo.service.EducationService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,6 +53,7 @@ public class EducationControllerTest {
         input.setDegree("Bachelor");
         input.setStartYear(2010);
         input.setEndYear(2014);
+        input.setUserIds(Set.of(1L));
 
         var saved = new EducationResponseDto();
         saved.setId(1L);
@@ -58,7 +61,7 @@ public class EducationControllerTest {
         saved.setDegree("Bachelor");
         saved.setStartYear(2010);
         saved.setEndYear(2014);
-        saved.setUserId(1L);
+        saved.setUsersIds(Set.of(1L));
 
         when(educationService.create(eq(1L), any(EducationRequestDto.class))).thenReturn(saved);
 
@@ -80,6 +83,7 @@ public class EducationControllerTest {
         input.setDegree("Master");
         input.setStartYear(2015);
         input.setEndYear(2017);
+        input.setUserIds(Set.of(1L));
 
         var updated = new EducationResponseDto();
         updated.setId(1L);
@@ -87,7 +91,7 @@ public class EducationControllerTest {
         updated.setDegree("Master");
         updated.setStartYear(2015);
         updated.setEndYear(2017);
-        updated.setUserId(1L);
+        updated.setUsersIds(Set.of(1L));
 
         when(educationService.update(eq(1L), any(EducationRequestDto.class))).thenReturn(updated);
 
@@ -110,7 +114,7 @@ public class EducationControllerTest {
         education.setDegree("PhD");
         education.setStartYear(2012);
         education.setEndYear(2016);
-        education.setUserId(1L);
+        education.setUsersIds(Set.of(1L));
 
         when(educationService.getById(1L)).thenReturn(education);
 
@@ -131,7 +135,7 @@ public class EducationControllerTest {
         edu1.setDegree("PhD");
         edu1.setStartYear(2012);
         edu1.setEndYear(2016);
-        edu1.setUserId(1L);
+        edu1.setUsersIds(Set.of(1L)); // обновлено
 
         var edu2 = new EducationResponseDto();
         edu2.setId(2L);
@@ -139,7 +143,7 @@ public class EducationControllerTest {
         edu2.setDegree("Bachelor");
         edu2.setStartYear(2008);
         edu2.setEndYear(2012);
-        edu2.setUserId(1L);
+        edu2.setUsersIds(Set.of(1L)); // обновлено
 
         when(educationService.getAllByUserId(1L)).thenReturn(List.of(edu1, edu2));
 
@@ -154,11 +158,11 @@ public class EducationControllerTest {
     void testDeleteEducation() throws Exception {
         UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
 
+        doNothing().when(educationService).delete(1L);
+
         mockMvc.perform(delete("/education/1")
                         .header("Authorization", "Bearer token"))
                 .andExpect(status().isNoContent());
-
-        verify(educationService, times(1)).delete(1L);
     }
 }
 

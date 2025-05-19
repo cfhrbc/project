@@ -53,14 +53,12 @@ public class EducationController {
 
     @Operation(summary = "Получить все записи об образовании пользователя", description = "Возвращает список всех записей об образовании для заданного пользователя")
     @ApiResponse(responseCode = "200", description = "Список успешно получен")
-    @Parameter(name = "userId", description = "ID пользователя", required = true)
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<EducationResponseDto>> getAllByUser(@Parameter(name = "userId", description = "ID пользователя")@PathVariable Long userId) {
         return ResponseEntity.ok(service.getAllByUserId(userId));
     }
 
-    @Operation(summary = "Получить запись об образовании по ID",
-            description = "Возвращает запись об образовании по её ID")
+    @Operation(summary = "Получить запись об образовании по ID", description = "Возвращает запись об образовании по её ID")
     @ApiResponse(responseCode = "200", description = "Запись найдена")
     @ApiResponse(responseCode = "404", description = "Запись не найдена")
     @GetMapping("/{id}")

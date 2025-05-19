@@ -1,19 +1,18 @@
 package ru.kata.spring.boot_security.demo.service;
 
-import ru.kata.spring.boot_security.demo.dto.WorkRequestDto;
-import ru.kata.spring.boot_security.demo.dto.WorkResponseDto;
+import ru.kata.spring.boot_security.demo.dto.WorkDto;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface WorkService {
 
-    WorkResponseDto create(Long userId, WorkRequestDto dto);
+    WorkDto findById(Long id);
 
-    WorkResponseDto update(Long id, WorkRequestDto dto);
+    WorkDto create(Long userId, WorkDto dto);
 
-    void delete(Long id);
+    WorkDto update(Long id, WorkDto workDto);
 
-    WorkResponseDto getById(Long id);
+    void deleteById(Long id);
 
-    List<WorkResponseDto> getAllByUserId(Long userId);
+    Optional<WorkDto> findByUserId(Long userId);
 }

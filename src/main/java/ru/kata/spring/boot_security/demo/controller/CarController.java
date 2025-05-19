@@ -14,6 +14,7 @@ import ru.kata.spring.boot_security.demo.dto.CarResDto;
 import ru.kata.spring.boot_security.demo.service.CarService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -29,7 +30,7 @@ public class CarController {
     @ApiResponse(responseCode = "200", description = "Автомобиль успешно получен")
     @ApiResponse(responseCode = "404", description = "Автомобиль не найден")
     @GetMapping("/{id}")
-    public ResponseEntity<CarResDto> getCarById(@PathVariable @Parameter(description = "ID пользователя", example = "1") Long id) {
+    public ResponseEntity<CarResDto> getCarById(@PathVariable @Parameter(description = "ID машины", example = "1") Long id) {
         return ResponseEntity.ok(carService.getCarById(id));
     }
 
@@ -37,7 +38,7 @@ public class CarController {
     @ApiResponse(responseCode = "201", description = "Новый Автомобиль успешно добавлен в систему")
     @ApiResponse(responseCode = "400", description = "Ошибка валидации входных данных")
     @PostMapping
-    public ResponseEntity<CarResDto> createCar(@Valid @RequestBody @Parameter(description = "Данные нового пользователя") CarReqDto carReqDto) {
+    public ResponseEntity<CarResDto> createCar(@Valid @RequestBody @Parameter(description = "Данные нового Автомобиля") CarReqDto carReqDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(carService.createCar(carReqDto));
     }
 
@@ -45,7 +46,7 @@ public class CarController {
     @ApiResponse(responseCode = "200", description = "Автомобиль успешно обновлён")
     @ApiResponse(responseCode = "404", description = "Автомобиль не найден")
     @PutMapping("/{id}")
-    public ResponseEntity<CarResDto> updateCar(@PathVariable @Parameter(description = "ID пользователя", example = "1") Long id, @Valid @RequestBody CarReqDto carReqDto) {
+    public ResponseEntity<CarResDto> updateCar(@PathVariable @Parameter(description = "ID машины", example = "1") Long id, @Valid @RequestBody CarReqDto carReqDto) {
         return ResponseEntity.ok(carService.updateCar(id, carReqDto));
     }
 
@@ -53,8 +54,16 @@ public class CarController {
     @ApiResponse(responseCode = "204", description = "Автомобиль успешно удалён")
     @ApiResponse(responseCode = "404", description = "Автомобиль не найден")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCar(@PathVariable @Parameter(description = "ID пользователя", example = "1") Long id) {
+    public ResponseEntity<Void> deleteCar(@PathVariable @Parameter(description = "ID машины", example = "1") Long id) {
         carService.deleteCar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Получить все машины пользователя по ID")
+    @ApiResponse(responseCode = "200", description = "Список машин успешно получен")
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<CarResDto>> getAllByUserId(
+            @PathVariable @Parameter(description = "ID пользователя", example = "1") Long userId) {
+        return ResponseEntity.ok(carService.getAllByUserId(userId));
     }
 }

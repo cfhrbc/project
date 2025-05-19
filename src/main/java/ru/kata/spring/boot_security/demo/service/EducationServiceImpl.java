@@ -8,10 +8,10 @@ import ru.kata.spring.boot_security.demo.dto.EducationResponseDto;
 import ru.kata.spring.boot_security.demo.exception.EntityNotFoundException;
 import ru.kata.spring.boot_security.demo.exception.UserNotFoundException;
 import ru.kata.spring.boot_security.demo.mapper.EducationMapper;
-import ru.kata.spring.boot_security.demo.model.Education;
 import ru.kata.spring.boot_security.demo.repository.EducationRepository;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,15 +23,14 @@ public class EducationServiceImpl implements EducationService {
     private final EducationMapper mapper;
     private final UserService userService;
 
-    @Override
-    public EducationResponseDto create(Long userId, EducationRequestDto dto) {
-        var user = userService.findUserEntityById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+    public EducationResponseDto create(Long usersIds, EducationRequestDto dto) {
+        var user = userService.findUserEntityById(usersIds)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + usersIds + " не найден"));
 
-        var entity = mapper.toEntity(dto);
-        entity.setUser(user);
+        var education = mapper.toEntity(dto);
+        education.setUsers(Set.of(user));
 
-        return mapper.toDto(repository.save(entity));
+        return mapper.toDto(repository.save(education));
     }
 
     @Override
@@ -54,15 +53,15 @@ public class EducationServiceImpl implements EducationService {
     }
 
     @Override
-    public List<EducationResponseDto> getAllByUserId(Long userId) {
-        return repository.findAllByUserId(userId).stream()
+    public List<EducationResponseDto> getAllByUserId(Long usersIds) {
+        return repository.findAllByUsersId(usersIds).stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public EducationResponseDto getById(Long id) {
-        Education education = repository.findById(id)
+        var education = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Образование не найдено"));
         return mapper.toDto(education);
     }

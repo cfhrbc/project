@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import java.util.Set;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,6 +28,7 @@ public class EducationRequestDto {
     @Min(value = 1900)
     private Integer endYear;
 
-
+    @NotEmpty(message = "Список пользователей не может быть пустым")
+    private Set<Long> userIds;
 }
 

@@ -5,9 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.kata.spring.boot_security.demo.model.Work;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,73 +15,96 @@ public class WorkRepositoryTest extends BaseRepositoryTest {
 
     @Autowired
     private WorkRepository workRepository;
-
     @Autowired
     private TestDataFactory factory;
+    @Autowired
+    private UserRepository userRepository;
 
     @Test
     void testCreateWork() {
         var user = factory.createTestUser("john");
-        var work = factory.createWork(user);
-        work = workRepository.save(work);
+        user = userRepository.save(user);
 
-        assertNotNull(work.getId());
-        assertEquals("Company Inc", work.getCompany());
-        assertEquals("Engineer", work.getPosition());
-        assertEquals(user.getId(), work.getUser().getId());
+        var work = factory.createWork(user);
+        work.getUsers().add(user);
+        user.setWork(work);
+
+        var saved = workRepository.save(work);
+
+        assertNotNull(saved.getId());
+        assertEquals("Google", saved.getCompany());
+        assertEquals("Developer", saved.getPosition());
+        assertTrue(saved.getUsers().contains(user));
     }
 
     @Test
     void testFindWorkById() {
-        var user = factory.createTestUser("emma");
-        var work = factory.createWork(user);
-        work = workRepository.save(work);
+        var user = factory.createTestUser("alice");
+        user = userRepository.save(user);
 
-        var found = workRepository.findById(work.getId());
+        var work = factory.createWork(user);
+        work.getUsers().add(user);
+        user.setWork(work);
+
+        var saved = workRepository.save(work);
+
+        var found = workRepository.findById(saved.getId());
 
         assertTrue(found.isPresent());
-        assertEquals("Company Inc", found.get().getCompany());
-        assertEquals("Engineer", found.get().getPosition());
+        assertEquals("Google", found.get().getCompany());
     }
 
     @Test
     void testUpdateWork() {
-        var user = factory.createTestUser("david");
+        var user = factory.createTestUser("michael");
+        user = userRepository.save(user);
+
         var work = factory.createWork(user);
+        work.getUsers().add(user);
+        user.setWork(work);
+
         work = workRepository.save(work);
 
-        work.setCompany("New Corp");
-        work.setPosition("Manager");
+        work.setCompany("Amazon");
+        work.setPosition("Team Lead");
+
         var updated = workRepository.save(work);
 
-        assertEquals("New Corp", updated.getCompany());
-        assertEquals("Manager", updated.getPosition());
+        assertEquals("Amazon", updated.getCompany());
+        assertEquals("Team Lead", updated.getPosition());
     }
 
     @Test
     void testDeleteWork() {
-        var user = factory.createTestUser("lisa");
+        var user = factory.createTestUser("julia");
+        user = userRepository.save(user);
+
         var work = factory.createWork(user);
+        work.getUsers().add(user);
+        user.setWork(work);
+
         work = workRepository.save(work);
+        Long id = work.getId();
 
-        workRepository.delete(work);
-        var found = workRepository.findById(work.getId());
+        workRepository.deleteById(id);
 
-        assertTrue(found.isEmpty());
+        assertFalse(workRepository.findById(id).isPresent());
     }
 
     @Test
-    void testFindAllByUserId() {
-        var user = factory.createTestUser("mike");
+    void testFindWorkByUserId() {
+        var user = factory.createTestUser("emily");
+        user = userRepository.save(user);
 
-        var work1 = factory.createWork(user);
-        var work2 = new Work(null, "Tech Solutions", "Analyst", "2018-06-01", "2021-01-01", user);
-        workRepository.saveAll(List.of(work1, work2));
+        var work = factory.createWork(user);
+        work.getUsers().add(user);
+        user.setWork(work);
 
-        var result = workRepository.findAllByUserId(user.getId());
+        work = workRepository.save(work);
 
-        assertEquals(2, result.size());
-        assertTrue(result.stream().anyMatch(w -> w.getCompany().equals("Company Inc")));
-        assertTrue(result.stream().anyMatch(w -> w.getCompany().equals("Tech Solutions")));
+        var found = workRepository.findWorkByUsersId(user.getId());
+
+        assertTrue(found.isPresent());
+        assertEquals("Google", found.get().getCompany());
     }
 }

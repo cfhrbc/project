@@ -5,12 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class EducationResponseDto {
 
-    @Schema(description = "Идентификатор соцсети", example = "10")
+    @Schema(description = "Идентификатор образовательного учреждения", example = "10")
     private Long id;
 
     @Schema(description = "Название учреждения")
@@ -19,12 +22,13 @@ public class EducationResponseDto {
     @Schema(description = "Специальность")
     private String degree;
 
-    @Schema(description = "Начало учебного года")
+    @Schema(description = "Начало обучения")
     private Integer startYear;
 
-    @Schema(description = "Конец учебного года")
+    @Schema(description = "Конец обучения")
     private Integer endYear;
 
-    @Schema(description = "Идентификатор пользователя", example = "10")
-    private Long userId;
+    @Schema(description = "Список идентификаторов пользователей", example = "[1, 2, 3]")
+    @NotEmpty(message = "Список пользователей не может быть пустым")
+    private Set<Long> usersIds;
 }

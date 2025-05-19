@@ -3,13 +3,26 @@ CREATE TABLE IF NOT EXISTS roles (
                        name VARCHAR(50) NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS work (
+                                    id  BIGINT PRIMARY KEY AUTO_INCREMENT,
+                                    company VARCHAR(255) NOT NULL,
+                                    position VARCHAR(255) NOT NULL,
+                                    start_date VARCHAR(255) NOT NULL,
+                                    end_date VARCHAR(255)
+);
+
 CREATE TABLE IF NOT EXISTS users (
                        id BIGINT PRIMARY KEY AUTO_INCREMENT,
                        name VARCHAR(50) NOT NULL,
                        surname VARCHAR(50),
                        email VARCHAR(100) NOT NULL UNIQUE,
                        password VARCHAR(255),
-                       age INT
+                       age INT,
+                       work_id BIGINT,
+
+                       CONSTRAINT fk_users_work
+                           FOREIGN KEY (work_id) REFERENCES work(id)
+                               ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS users_roles (

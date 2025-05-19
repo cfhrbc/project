@@ -10,16 +10,15 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.kata.spring.boot_security.demo.configs.JwtTokenProvider;
-import ru.kata.spring.boot_security.demo.dto.WorkRequestDto;
-import ru.kata.spring.boot_security.demo.dto.WorkResponseDto;
+import ru.kata.spring.boot_security.demo.dto.WorkDto;
 import ru.kata.spring.boot_security.demo.service.UserService;
 import ru.kata.spring.boot_security.demo.service.WorkService;
 
-import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,28 +46,27 @@ public class WorkControllerTest {
     void testCreateWork() throws Exception {
         UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
 
-        var request = new WorkRequestDto();
-        request.setCompany("Company");
-        request.setPosition("Developer");
-        request.setStartDate("2022-01-01");
-        request.setEndDate("2023-01-01");
+        var input = new WorkDto();
+        input.setCompany("Google");
+        input.setPosition("Developer");
+        input.setStartDate("2020-01-01");
+        input.setEndDate("2023-01-01");
 
-        var response = new WorkResponseDto();
-        response.setId(1L);
-        response.setCompany("Company");
-        response.setPosition("Developer");
-        response.setStartDate("2022-01-01");
-        response.setEndDate("2023-01-01");
-        response.setUserId(1L);
+        var saved = new WorkDto();
+        saved.setId(1L);
+        saved.setCompany("Google");
+        saved.setPosition("Developer");
+        saved.setStartDate("2020-01-01");
+        saved.setEndDate("2023-01-01");
 
-        when(workService.create(eq(1L), any(WorkRequestDto.class))).thenReturn(response);
+        when(workService.create(eq(1L), any(WorkDto.class))).thenReturn(saved);
 
         mockMvc.perform(post("/work/1")
                         .header("Authorization", "Bearer token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.company").value("Company"))
+                .andExpect(jsonPath("$.company").value("Google"))
                 .andExpect(jsonPath("$.position").value("Developer"));
     }
 
@@ -76,89 +74,89 @@ public class WorkControllerTest {
     void testUpdateWork() throws Exception {
         UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
 
-        var request = new WorkRequestDto();
-        request.setCompany("NewCompany");
-        request.setPosition("Lead Developer");
-        request.setStartDate("2020-01-01");
-        request.setEndDate("2021-12-31");
+        var input = new WorkDto();
+        input.setCompany("Amazon");
+        input.setPosition("Lead");
+        input.setStartDate("2021-01-01");
+        input.setEndDate("2024-01-01");
 
-        var response = new WorkResponseDto();
-        response.setId(1L);
-        response.setCompany("NewCompany");
-        response.setPosition("Lead Developer");
-        response.setStartDate("2020-01-01");
-        response.setEndDate("2021-12-31");
-        response.setUserId(1L);
+        var updated = new WorkDto();
+        updated.setId(1L);
+        updated.setCompany("Amazon");
+        updated.setPosition("Lead");
+        updated.setStartDate("2021-01-01");
+        updated.setEndDate("2024-01-01");
 
-        when(workService.update(eq(1L), any(WorkRequestDto.class))).thenReturn(response);
+        when(workService.update(eq(1L), any(WorkDto.class))).thenReturn(updated);
 
         mockMvc.perform(put("/work/1")
                         .header("Authorization", "Bearer token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.company").value("NewCompany"))
-                .andExpect(jsonPath("$.position").value("Lead Developer"));
+                .andExpect(jsonPath("$.company").value("Amazon"))
+                .andExpect(jsonPath("$.position").value("Lead"));
     }
 
     @Test
     void testDeleteWork() throws Exception {
         UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
 
-        doNothing().when(workService).delete(1L);
-
         mockMvc.perform(delete("/work/1")
                         .header("Authorization", "Bearer token"))
                 .andExpect(status().isNoContent());
+
+        verify(workService).deleteById(1L);
     }
 
     @Test
     void testGetWorkById() throws Exception {
         UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
 
-        var response = new WorkResponseDto();
-        response.setId(1L);
-        response.setCompany("Company");
-        response.setPosition("Developer");
-        response.setStartDate("2022-01-01");
-        response.setEndDate("2023-01-01");
-        response.setUserId(1L);
+        var dto = new WorkDto();
+        dto.setId(1L);
+        dto.setCompany("Apple");
+        dto.setPosition("Manager");
+        dto.setStartDate("2019-01-01");
+        dto.setEndDate("2022-01-01");
 
-        when(workService.getById(1L)).thenReturn(response);
+        when(workService.findById(1L)).thenReturn(dto);
 
         mockMvc.perform(get("/work/1")
                         .header("Authorization", "Bearer token"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.company").value("Company"));
+                .andExpect(jsonPath("$.company").value("Apple"))
+                .andExpect(jsonPath("$.position").value("Manager"));
     }
 
     @Test
-    void testGetAllWorkByUserId() throws Exception {
+    void testGetWorkByUserId_Found() throws Exception {
         UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
 
-        var response1 = new WorkResponseDto();
-        response1.setId(1L);
-        response1.setCompany("Company1");
-        response1.setPosition("Dev1");
-        response1.setStartDate("2020-01-01");
-        response1.setEndDate("2021-01-01");
-        response1.setUserId(1L);
+        var dto = new WorkDto();
+        dto.setId(1L);
+        dto.setCompany("Tesla");
+        dto.setPosition("Engineer");
+        dto.setStartDate("2018-01-01");
+        dto.setEndDate("2021-01-01");
 
-        var response2 = new WorkResponseDto();
-        response2.setId(2L);
-        response2.setCompany("Company2");
-        response2.setPosition("Dev2");
-        response2.setStartDate("2021-02-01");
-        response2.setEndDate("2022-02-01");
-        response2.setUserId(1L);
-
-        when(workService.getAllByUserId(1L)).thenReturn(List.of(response1, response2));
+        when(workService.findByUserId(1L)).thenReturn(Optional.of(dto));
 
         mockMvc.perform(get("/work/user/1")
                         .header("Authorization", "Bearer token"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].company").value("Company1"))
-                .andExpect(jsonPath("$[1].company").value("Company2"));
+                .andExpect(jsonPath("$.company").value("Tesla"))
+                .andExpect(jsonPath("$.position").value("Engineer"));
+    }
+
+    @Test
+    void testGetWorkByUserId_NotFound() throws Exception {
+        UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
+
+        when(workService.findByUserId(1L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/work/user/1")
+                        .header("Authorization", "Bearer token"))
+                .andExpect(status().isNotFound());
     }
 }

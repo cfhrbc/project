@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface EducationService {
 
-    EducationResponseDto create(Long userId, EducationRequestDto dto);
+    EducationResponseDto create(Long usersIds, EducationRequestDto dto);
 
     EducationResponseDto update(Long id, EducationRequestDto dto);
 
     void delete(Long id);
 
-    List<EducationResponseDto> getAllByUserId(Long userId);
+    List<EducationResponseDto> getAllByUserId(Long usersIds);
 
     EducationResponseDto getById(Long id);
 }

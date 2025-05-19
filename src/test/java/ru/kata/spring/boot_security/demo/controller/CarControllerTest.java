@@ -15,6 +15,8 @@ import ru.kata.spring.boot_security.demo.dto.CarResDto;
 import ru.kata.spring.boot_security.demo.service.CarService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -101,5 +103,27 @@ public class CarControllerTest {
         mockMvc.perform(delete("/cars/1")
                         .header("Authorization", "Bearer token"))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void testGetAllCarsByUserId() throws Exception {
+        UtilsTest.mockAdminAuthentication("admin", jwtTokenProvider, userDetailsService);
+
+        Long userId = 1L;
+
+        var carList = List.of(
+                new CarResDto(1L, "Toyota", "Camry", "Black", 2025, "Ivan Petrov"),
+                new CarResDto(2L, "BMW", "X5", "White", 2023, "Ivan Petrov")
+        );
+
+        when(carService.getAllByUserId(userId)).thenReturn(carList);
+
+        mockMvc.perform(get("/cars/user/{userId}", userId)
+                        .header("Authorization", "Bearer token"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].brand").value("Toyota"))
+                .andExpect(jsonPath("$[1].model").value("X5"));
     }
 }

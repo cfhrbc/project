@@ -5,9 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
-@Table(name = "education")
+@Table(name = "educations")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -29,7 +31,6 @@ public class Education {
     @Column(name = "end_year")
     private Integer endYear;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @ManyToMany(mappedBy = "educations")
+    private Set<User> users = new HashSet<>();
 }

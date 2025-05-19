@@ -28,7 +28,9 @@ public class TestDataFactory {
     }
 
     public Education createEducation(User user) {
-        return new Education(null, "University", "Bachelor", 2010, 2014, user);
+        Set<User> users = new HashSet<>();
+        users.add(user);
+        return new Education(null, "University", "Bachelor", 2010, 2014, users);
     }
 
     public Family createFamilyMember(User user) {
@@ -44,6 +46,11 @@ public class TestDataFactory {
     }
 
     public Work createWork(User user) {
-        return new Work(null, "Company Inc", "Engineer", "2015-01-01", "2020-12-31", user);
+        var work = new Work();
+        work.setCompany("Google");
+        work.setPosition("Developer");
+        work.setStartDate("2020-01-01");
+        work.setEndDate("2023-01-01");
+        return work;
     }
 }

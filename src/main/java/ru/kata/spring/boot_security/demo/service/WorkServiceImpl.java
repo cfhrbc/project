@@ -3,15 +3,14 @@ package ru.kata.spring.boot_security.demo.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.dto.WorkRequestDto;
-import ru.kata.spring.boot_security.demo.dto.WorkResponseDto;
+import ru.kata.spring.boot_security.demo.dto.WorkDto;
 import ru.kata.spring.boot_security.demo.exception.EntityNotFoundException;
-import ru.kata.spring.boot_security.demo.exception.UserNotFoundException;
 import ru.kata.spring.boot_security.demo.mapper.WorkMapper;
+import ru.kata.spring.boot_security.demo.model.User;
+import ru.kata.spring.boot_security.demo.model.Work;
 import ru.kata.spring.boot_security.demo.repository.WorkRepository;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -22,19 +21,20 @@ public class WorkServiceImpl implements WorkService {
     private final UserService userService;
     private final WorkMapper workMapper;
 
-    @Override
-    public WorkResponseDto create(Long userId, WorkRequestDto dto) {
-        var user = userService.findUserEntityById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
+    public WorkDto create(Long userId, WorkDto dto) {
+        User user = userService.findUserEntityById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Пользователь с ID " + userId + " не найден"));
 
-        var entity = workMapper.toEntity(dto);
-        entity.setUser(user);
+        Work work = workMapper.toEntity(dto);
+        work.getUsers().add(user);
+        user.setWork(work);
 
-        return workMapper.toResponseDto(workRepository.save(entity));
+        Work savedWork = workRepository.save(work);
+        return workMapper.toDto(savedWork);
     }
 
     @Override
-    public WorkResponseDto update(Long id, WorkRequestDto dto) {
+    public WorkDto update(Long id, WorkDto dto) {
         var existing = workRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Работа не найдена"));
 
@@ -44,25 +44,23 @@ public class WorkServiceImpl implements WorkService {
         existing.setEndDate(dto.getEndDate());
 
         var updated = workRepository.save(existing);
-        return workMapper.toResponseDto(updated);
+        return workMapper.toDto(updated);
     }
 
     @Override
-    public void delete(Long id) {
+    public void deleteById(Long id) {
         workRepository.deleteById(id);
     }
 
     @Override
-    public WorkResponseDto getById(Long id) {
-        return workMapper.toResponseDto(
-                workRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Работа не найдена")));
+    public WorkDto findById(Long id) {
+        return workMapper.toDto(
+                workRepository.findById(id)
+                        .orElseThrow(() -> new EntityNotFoundException("Work not found")));
     }
 
     @Override
-    public List<WorkResponseDto> getAllByUserId(Long userId) {
-        return workRepository.findAllByUserId(userId)
-                .stream()
-                .map(workMapper::toResponseDto)
-                .collect(Collectors.toList());
+    public Optional<WorkDto> findByUserId(Long userId) {
+        return workRepository.findWorkByUsersId(userId).map(workMapper::toDto);
     }
 }

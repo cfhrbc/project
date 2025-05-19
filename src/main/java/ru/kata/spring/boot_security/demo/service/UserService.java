@@ -20,6 +20,8 @@ public interface UserService {
 
     UserDto saveUser(UserDto userDto);
 
+    void saveUserWork(User user);
+
     void delete(Long id);
 
     List<UserDto> getUsersWithFilters(Map<String, String> filters, String sortBy, String sortOrder);

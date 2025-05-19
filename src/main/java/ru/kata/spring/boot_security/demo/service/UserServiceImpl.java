@@ -72,6 +72,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException("Пользователь не найден"));
     }
 
+    public void saveUserWork(User user) {
+
+        userRepository.save(user);
+    }
+
     public Optional<User> findUserEntityById(Long id) {
         return userRepository.findById(id);
     }
