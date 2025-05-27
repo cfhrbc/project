@@ -11,13 +11,15 @@ import ru.kata.spring.boot_security.demo.model.User;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+import static ru.kata.spring.boot_security.demo.constants.MapStructConstants.SPRING;
+
+@Mapper(componentModel = SPRING)
 public interface EducationMapper {
 
-    @Mapping(target = "users", ignore = true) // users будут устанавливаться вручную в сервисе
+    @Mapping(target = "users", ignore = true)
     Education toEntity(EducationRequestDto dto);
 
-    @Mapping(source = "users", target = "usersIds")
+    @Mapping(source = "users", target = "usersId")
     EducationResponseDto toDto(Education education);
 
     default Set<Long> mapUsersToUserIds(Set<User> users) {

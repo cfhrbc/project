@@ -53,7 +53,7 @@ public class EducationControllerTest {
         input.setDegree("Bachelor");
         input.setStartYear(2010);
         input.setEndYear(2014);
-        input.setUserIds(Set.of(1L));
+        input.setUserId(Set.of(1L));
 
         var saved = new EducationResponseDto();
         saved.setId(1L);
@@ -61,7 +61,7 @@ public class EducationControllerTest {
         saved.setDegree("Bachelor");
         saved.setStartYear(2010);
         saved.setEndYear(2014);
-        saved.setUsersIds(Set.of(1L));
+        saved.setUsersId(Set.of(1L));
 
         when(educationService.create(eq(1L), any(EducationRequestDto.class))).thenReturn(saved);
 
@@ -83,7 +83,7 @@ public class EducationControllerTest {
         input.setDegree("Master");
         input.setStartYear(2015);
         input.setEndYear(2017);
-        input.setUserIds(Set.of(1L));
+        input.setUserId(Set.of(1L));
 
         var updated = new EducationResponseDto();
         updated.setId(1L);
@@ -91,7 +91,7 @@ public class EducationControllerTest {
         updated.setDegree("Master");
         updated.setStartYear(2015);
         updated.setEndYear(2017);
-        updated.setUsersIds(Set.of(1L));
+        updated.setUsersId(Set.of(1L));
 
         when(educationService.update(eq(1L), any(EducationRequestDto.class))).thenReturn(updated);
 
@@ -114,7 +114,7 @@ public class EducationControllerTest {
         education.setDegree("PhD");
         education.setStartYear(2012);
         education.setEndYear(2016);
-        education.setUsersIds(Set.of(1L));
+        education.setUsersId(Set.of(1L));
 
         when(educationService.getById(1L)).thenReturn(education);
 
@@ -135,7 +135,7 @@ public class EducationControllerTest {
         edu1.setDegree("PhD");
         edu1.setStartYear(2012);
         edu1.setEndYear(2016);
-        edu1.setUsersIds(Set.of(1L)); // обновлено
+        edu1.setUsersId(Set.of(1L));
 
         var edu2 = new EducationResponseDto();
         edu2.setId(2L);
@@ -143,7 +143,7 @@ public class EducationControllerTest {
         edu2.setDegree("Bachelor");
         edu2.setStartYear(2008);
         edu2.setEndYear(2012);
-        edu2.setUsersIds(Set.of(1L)); // обновлено
+        edu2.setUsersId(Set.of(1L));
 
         when(educationService.getAllByUserId(1L)).thenReturn(List.of(edu1, edu2));
 

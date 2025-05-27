@@ -3,14 +3,6 @@ CREATE TABLE IF NOT EXISTS roles (
                        name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS work (
-                                    id  BIGINT PRIMARY KEY AUTO_INCREMENT,
-                                    company VARCHAR(255) NOT NULL,
-                                    position VARCHAR(255) NOT NULL,
-                                    start_date VARCHAR(255) NOT NULL,
-                                    end_date VARCHAR(255)
-);
-
 CREATE TABLE IF NOT EXISTS users (
                        id BIGINT PRIMARY KEY AUTO_INCREMENT,
                        name VARCHAR(50) NOT NULL,

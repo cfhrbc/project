@@ -23,9 +23,9 @@ public class EducationServiceImpl implements EducationService {
     private final EducationMapper mapper;
     private final UserService userService;
 
-    public EducationResponseDto create(Long usersIds, EducationRequestDto dto) {
-        var user = userService.findUserEntityById(usersIds)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + usersIds + " не найден"));
+    public EducationResponseDto create(Long usersId, EducationRequestDto dto) {
+        var user = userService.findUserEntityById(usersId)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id " + usersId + " не найден"));
 
         var education = mapper.toEntity(dto);
         education.setUsers(Set.of(user));
@@ -53,8 +53,8 @@ public class EducationServiceImpl implements EducationService {
     }
 
     @Override
-    public List<EducationResponseDto> getAllByUserId(Long usersIds) {
-        return repository.findAllByUsersId(usersIds).stream()
+    public List<EducationResponseDto> getAllByUserId(Long usersId) {
+        return repository.findAllByUsersId(usersId).stream()
                 .map(mapper::toDto)
                 .collect(Collectors.toList());
     }

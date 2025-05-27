@@ -1,18 +1,18 @@
 package ru.kata.spring.boot_security.demo.repository;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.model.Role;
-import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,88 +23,108 @@ public class UserRepositoryTest extends BaseRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private RoleRepository roleRepository;
-
     @Autowired
     private UserService userService;
-
-    private Role role;
+    @Autowired
+    private TestDataFactory factory;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Test
-    void testCreateUser() {
-        var saved = createUser("jane", "password", "Smith", "jane@example.com", 28);
+    void testLoadUserByUsername() {
+        var user = factory.createTestUser("alex");
+        userRepository.save(user);
 
-        assertNotNull(saved.getId());
-        assertEquals("jane", saved.getName());
+        var loadedUser = userService.loadUserByUsername("alex");
+
+        assertNotNull(loadedUser);
+        assertEquals("alex", loadedUser.getUsername());
     }
 
     @Test
-    void testUpdateUser() {
-        var saved = createUser("emma", "oldpass", "Stone", "emma@example.com", 35);
+    void testShowAllUsers() {
+        var user1 = factory.createTestUser("user1");
+        var user2 = factory.createTestUser("user2");
+        userRepository.saveAll(List.of(user1, user2));
 
-        saved.setPassword("newpass");
-        saved.setAge(36);
-        var updated = userRepository.save(saved);
+        var users = userService.showAllUsers();
 
-        assertEquals("newpass", updated.getPassword());
-        assertEquals(36, updated.getAge());
-    }
+        assertEquals(3, users.size());
+        assertTrue(users.stream().anyMatch(u -> u.getName().equals("user1")));
+        assertTrue(users.stream().anyMatch(u -> u.getName().equals("user2")));
+        assertTrue(users.stream().anyMatch(u -> u.getName().equals("admin")));
 
-    @Test
-    void testFindById() {
-        var saved = createUser("alex", "pass", "Brown", "alex@example.com", 25);
-
-        var found = userRepository.findById(saved.getId());
-        assertTrue(found.isPresent());
-        assertEquals("alex", found.get().getName());
     }
 
     @Test
     void testDeleteUser() {
-        var saved = createUser("mike", "pass", "Johnson", "mike@example.com", 40);
+        var user = factory.createTestUser("del");
+        user = userRepository.save(user);
 
-        userRepository.deleteById(saved.getId());
-        var deleted = userRepository.findById(saved.getId());
-        assertFalse(deleted.isPresent());
+        userService.delete(user.getId());
+
+        assertTrue(userRepository.findById(user.getId()).isEmpty());
     }
 
     @Test
-    void testFindByName() {
-        createUser("john", "123", "Doe", "john@example.com", 30);
+    void testSaveUser() {
+        Role role = roleRepository.findByName("ROLE_USER")
+                .orElseGet(() -> roleRepository.save(new Role(null, "ROLE_USER", new HashSet<>())));
+        var userDto = factory.createTestUserDto("savedUser", Set.of(role.getName()));
 
-        var found = userRepository.findByName("john");
+        var savedDto = userService.saveUser(userDto);
+
+        var saved = userRepository.findById(savedDto.getId());
+        assertTrue(saved.isPresent());
+        assertEquals("savedUser", saved.get().getName());
+        assertTrue(passwordEncoder.matches(userDto.getPassword(), saved.get().getPassword()));
+    }
+
+    @Test
+    void testFindUserById() {
+        var user = factory.createTestUser("byId");
+        user = userRepository.save(user);
+
+        var dto = userService.findUserById(user.getId());
+
+        assertEquals("byId", dto.getName());
+    }
+
+    @Test
+    void testSaveUserWork() {
+        var user = factory.createTestUser("worker");
+        userService.saveUserWork(user);
+
+        assertNotNull(user.getId());
+        assertTrue(userRepository.findById(user.getId()).isPresent());
+    }
+
+    @Test
+    void testFindUserEntityById() {
+        var user = factory.createTestUser("entity");
+        user = userRepository.save(user);
+
+        var found = userService.findUserEntityById(user.getId());
+
         assertTrue(found.isPresent());
-        assertEquals("john", found.get().getName());
-    }
-
-    @BeforeEach
-    void setUp() {
-        role = roleRepository.findByName("ROLE_USER")
-                .orElseGet(() -> roleRepository.save(new Role("ROLE_USER")));
-    }
-
-    private User createUser(String name, String password, String surname, String email, int age) {
-        var user = new User(name, password, surname, email, age);
-        user.setRoles(new HashSet<>(Set.of(role)));
-        return userRepository.save(user);
+        assertEquals("entity", found.get().getName());
     }
 
     @Test
-    void testGetUsersWithSortingByAgeAsc() {
+    void testGetUsersWithFilters() {
+        var user1 = factory.createTestUser("john");
+        user1.setAge(30);
+        var user2 = factory.createTestUser("jane");
+        user2.setAge(25);
+        userRepository.saveAll(List.of(user1, user2));
 
-        createUser("alice", "pass1", "White", "alice@example.com", 30);
-        createUser("bob", "pass2", "Black", "bob@example.com", 25);
-        createUser("charlie", "pass3", "Green", "charlie@example.com", 35);
+        var filters = Map.of("age", "30");
 
-        Map<String, String> filters = new HashMap<>();
-        List<UserDto> sortedUsers = userService.getUsersWithFilters(filters, "age", "asc");
+        var result = userService.getUsersWithFilters(filters, "name", "asc");
 
-        assertEquals(4, sortedUsers.size());
-        assertEquals("bob", sortedUsers.get(0).getName());
-        assertEquals("admin", sortedUsers.get(1).getName());
-        assertEquals("alice", sortedUsers.get(2).getName());
-        assertEquals("charlie", sortedUsers.get(3).getName());
+        assertEquals(1, result.size());
+        assertEquals("john", result.get(0).getName());
     }
 }

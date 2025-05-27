@@ -6,8 +6,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dto.WorkDto;
 import ru.kata.spring.boot_security.demo.exception.EntityNotFoundException;
 import ru.kata.spring.boot_security.demo.mapper.WorkMapper;
-import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.model.Work;
 import ru.kata.spring.boot_security.demo.repository.WorkRepository;
 
 import java.util.Optional;
@@ -22,14 +20,14 @@ public class WorkServiceImpl implements WorkService {
     private final WorkMapper workMapper;
 
     public WorkDto create(Long userId, WorkDto dto) {
-        User user = userService.findUserEntityById(userId)
+        var user = userService.findUserEntityById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь с ID " + userId + " не найден"));
 
-        Work work = workMapper.toEntity(dto);
+        var work = workMapper.toEntity(dto);
         work.getUsers().add(user);
         user.setWork(work);
 
-        Work savedWork = workRepository.save(work);
+        var savedWork = workRepository.save(work);
         return workMapper.toDto(savedWork);
     }
 

@@ -1,54 +1,34 @@
 package ru.kata.spring.boot_security.demo.model;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "roles")
 public class Role implements GrantedAuthority {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void set(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new HashSet<>();
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Role() {
-    }
-
-    public Role(Long id) {
-        this.id = id;
-    }
-
-    public Role(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
     public Role(String name) {
         this.name = name;

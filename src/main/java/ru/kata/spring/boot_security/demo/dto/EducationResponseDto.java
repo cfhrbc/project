@@ -29,6 +29,5 @@ public class EducationResponseDto {
     private Integer endYear;
 
     @Schema(description = "Список идентификаторов пользователей", example = "[1, 2, 3]")
-    @NotEmpty(message = "Список пользователей не может быть пустым")
-    private Set<Long> usersIds;
+    private Set<Long> usersId;
 }

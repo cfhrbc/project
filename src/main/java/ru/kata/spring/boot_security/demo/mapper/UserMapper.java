@@ -5,7 +5,9 @@ import org.mapstruct.Mapping;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.dto.UserDto;
 
-@Mapper(componentModel = "spring")
+import static ru.kata.spring.boot_security.demo.constants.MapStructConstants.SPRING;
+
+@Mapper(componentModel = SPRING)
 public interface UserMapper {
 
     UserDto toDto(User user);

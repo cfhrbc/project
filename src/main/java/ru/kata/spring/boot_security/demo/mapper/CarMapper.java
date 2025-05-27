@@ -7,7 +7,9 @@ import ru.kata.spring.boot_security.demo.dto.CarReqDto;
 import ru.kata.spring.boot_security.demo.dto.CarResDto;
 import ru.kata.spring.boot_security.demo.model.Car;
 
-@Mapper(componentModel = "spring")
+import static ru.kata.spring.boot_security.demo.constants.MapStructConstants.SPRING;
+
+@Mapper(componentModel = SPRING)
 public interface CarMapper {
 
     @Mapping(source = "owner.username", target = "ownerName")

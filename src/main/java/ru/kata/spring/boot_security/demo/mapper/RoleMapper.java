@@ -4,7 +4,9 @@ import org.mapstruct.Mapper;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.dto.RoleDto;
 
-@Mapper(componentModel = "spring")
+import static ru.kata.spring.boot_security.demo.constants.MapStructConstants.SPRING;
+
+@Mapper(componentModel = SPRING)
 public interface RoleMapper {
 
     RoleDto toDto(Role role);

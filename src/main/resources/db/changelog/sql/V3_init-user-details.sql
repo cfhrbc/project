@@ -41,6 +41,14 @@ CREATE TABLE IF NOT EXISTS social_media (
                                                     ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS work (
+                                    id  BIGINT PRIMARY KEY AUTO_INCREMENT,
+                                    company VARCHAR(255) NOT NULL,
+                                    position VARCHAR(255) NOT NULL,
+                                    start_date VARCHAR(255) NOT NULL,
+                                    end_date VARCHAR(255) DEFAULT NULL
+);
+
 CREATE TABLE IF NOT EXISTS educations (
                                          id  BIGINT PRIMARY KEY AUTO_INCREMENT,
                                          institution VARCHAR(100) NOT NULL,

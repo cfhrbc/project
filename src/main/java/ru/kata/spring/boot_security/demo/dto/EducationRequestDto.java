@@ -29,6 +29,6 @@ public class EducationRequestDto {
     private Integer endYear;
 
     @NotEmpty(message = "Список пользователей не может быть пустым")
-    private Set<Long> userIds;
+    private Set<Long> userId;
 }
 

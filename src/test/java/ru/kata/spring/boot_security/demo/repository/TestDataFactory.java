@@ -2,10 +2,13 @@ package ru.kata.spring.boot_security.demo.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.kata.spring.boot_security.demo.dto.RoleDto;
+import ru.kata.spring.boot_security.demo.dto.UserDto;
 import ru.kata.spring.boot_security.demo.model.*;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class TestDataFactory {
@@ -20,6 +23,22 @@ public class TestDataFactory {
         var user = new User(name, "pass", "Test", name + "@mail.com", 30);
         user.setRoles(new HashSet<>(Set.of(role)));
         return userRepository.save(user);
+    }
+
+    public UserDto createTestUserDto(String name, Set<String> roleNames) {
+        Set<RoleDto> roles = roleNames.stream()
+                .map(roleName -> new RoleDto(null, roleName))
+                .collect(Collectors.toSet());
+
+        UserDto userDto = new UserDto();
+        userDto.setName(name);
+        userDto.setPassword("password123");
+        userDto.setSurname("TestSurname");
+        userDto.setEmail(name + "@mail.com");
+        userDto.setAge(25);
+        userDto.setRoles(roles);
+
+        return userDto;
     }
 
     public Car createCar(User owner, String brand, String model) {

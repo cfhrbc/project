@@ -30,7 +30,7 @@ public class WorkDto {
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Дата начала должна быть в формате yyyy-MM-dd")
     private String startDate;
 
-    @NotBlank(message = "Дата окончания не может быть пустой")
+    @Schema(description = "Дата окончания работы. Если пользователь всё ещё работает — может быть null")
     @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "Дата окончания должна быть в формате yyyy-MM-dd")
     private String endDate;
 }
