@@ -2,15 +2,14 @@ package ru.kata.spring.boot_security.demo.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import ru.kata.spring.boot_security.demo.dto.SocialMediaRequestDto;
 import ru.kata.spring.boot_security.demo.dto.SocialMediaResponseDto;
 import ru.kata.spring.boot_security.demo.model.SocialMedia;
 
 import java.util.List;
 
-import static ru.kata.spring.boot_security.demo.constants.MapStructConstants.SPRING;
-
-@Mapper(componentModel = SPRING)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface SocialMediaMapper {
 
     @Mapping(target = "user", ignore = true)
