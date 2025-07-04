@@ -14,3 +14,11 @@ databaseChangeLog:
         - sqlFile:
             path: sql/V2_init-data.sql
             relativeToChangelogFile: true
+
+  - changeSet:
+      id: 3
+      author: your-name
+      changes:
+        - sqlFile:
+            path: sql/V3_init-user-details.sql
+            relativeToChangelogFile: true

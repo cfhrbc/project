@@ -12,7 +12,7 @@ SELECT 'ROLE_USER'
 );
 
 INSERT INTO users (name, surname, email, password, age)
-SELECT 'admin', 'adminov', 'serarmynin@bk.ru', '$2a$10$HnSEZWrZynvI.H4EsjAi9O6eJhR/y6zFjRzNsFEYBujcAj91IAl8C', 29
+SELECT 'admin', 'adminov', 'serarmynin@bk.ru', '$2b$12$jqc3Xs7rB0.PNVcmd67T9uUzPDjBbAVpHTxj57yzxkUKOUxl7JdjW', 29
     WHERE NOT EXISTS (
     SELECT 1 FROM users WHERE email = 'serarmynin@bk.ru'
 );
